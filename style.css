@@ -473,7 +473,23 @@ body {
 .icon-pulse { animation: pulse 2s ease-in-out infinite; }
 @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
 
+/* ── Nav link ── */
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  text-decoration: none;
+  border: 1px solid var(--border);
+  padding: 0.3rem 0.7rem;
+  transition: color 0.2s, border-color 0.2s;
+}
+.nav-link:hover { color: var(--primary); border-color: var(--primary); }
+
 /* ── Utility ── */
 .mono    { font-family: var(--font-mono); }
 .hidden  { display: none !important; }
-
