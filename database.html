@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hash Database</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="database.css" />
+</head>
+<body>
+  <div class="page">
+    <div class="container db-container">
+
+      <!-- Header -->
+      <div class="header">
+        <div class="header-left">
+          <div class="header-title">
+            <svg class="icon icon-pulse" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+            <h1>Hash_Database</h1>
+          </div>
+          <p class="header-sub">localStorage // persistent on this device</p>
+        </div>
+        <div class="header-right">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><path d="M15 2v2M9 2v2M15 20v2M9 20v2M2 15h2M2 9h2M20 15h2M20 9h2"/></svg>
+          <span id="row-count-display">0 ROWS</span>
+        </div>
+      </div>
+
+      <!-- Toolbar -->
+      <div class="toolbar">
+        <!-- Sort/filter -->
+        <div class="toolbar-left">
+          <label class="toolbar-label">Sort By</label>
+          <div class="select-wrap">
+            <select id="filter-select" class="db-select mono">
+              <option value="all">All</option>
+              <option value="Succeeded">Succeeded</option>
+              <option value="Failed">Failed</option>
+              <option value="In Progress">In Progress</option>
+            </select>
+            <svg class="select-arrow icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="toolbar-right">
+          <button id="btn-edit-mode" class="btn-toolbar">
+            <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            Edit Mode
+          </button>
+          <button id="btn-delete-selected" class="btn-toolbar btn-danger hidden">
+            <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+            Delete Selected
+          </button>
+          <button id="btn-save" class="btn-toolbar btn-primary-toolbar">
+            <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+            Save
+          </button>
+        </div>
+      </div>
+
+      <!-- Save feedback -->
+      <div id="save-toast" class="save-toast hidden">
+        <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+        Saved to localStorage
+      </div>
+
+      <!-- Table card -->
+      <div class="card db-card">
+        <div class="corner corner-tl"></div>
+        <div class="corner corner-tr"></div>
+        <div class="corner corner-bl"></div>
+        <div class="corner corner-br"></div>
+
+        <div class="table-wrap">
+          <table class="db-table" id="db-table">
+            <thead>
+              <tr>
+                <th class="col-check hidden" id="th-check">
+                  <label class="cb-wrap">
+                    <input type="checkbox" id="select-all" />
+                    <span class="cb-box"></span>
+                  </label>
+                </th>
+                <th class="col-num">#</th>
+                <th>USERNAME</th>
+                <th>PASSWORD</th>
+                <th>HASH</th>
+                <th class="col-status">STATUS</th>
+              </tr>
+            </thead>
+            <tbody id="db-tbody">
+              <!-- rows injected by JS -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Empty state -->
+        <div id="empty-state" class="empty-state hidden">
+          <svg class="icon-xl" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+          <p>No rows yet. Hit <strong>+</strong> to add one.</p>
+        </div>
+
+        <!-- Table footer: + / pagination -->
+        <div class="table-footer">
+          <button id="btn-add" class="btn-add" title="Add row">
+            <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          </button>
+
+          <div class="pagination" id="pagination">
+            <button id="btn-prev" class="btn-page" title="Previous page">
+              <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+            </button>
+            <span class="page-info mono" id="page-info">Page 1 / 1</span>
+            <button id="btn-next" class="btn-page" title="Next page">
+              <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="database.js"></script>
+</body>
+</html>
